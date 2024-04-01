@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    service: teambit-git-repo
+  name: teambit-git-repo
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+--- 
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    service: teambit-git-repo-worker
+  name: teambit-git-repo-worker
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi

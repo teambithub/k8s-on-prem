@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    service: db
+  name: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: db
+  template:
+    metadata:
+      labels:
+        service: db
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}      
+      containers:
+        - image: {{ .Values.postgres.image }}
+          resources:
+          {{- toYaml .Values.postgres.resources | trim | nindent 12 }}
+          name: postgres
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: app-env-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: app-env-secret
+                  key: POSTGRES_DB
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-env-secret
+                  key: POSTGRES_PASSWORD      
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              subPath: data
+              name: teambit-db-data
+      restartPolicy: Always
+      volumes:
+        - name: teambit-db-data
+          persistentVolumeClaim:
+            claimName: teambit-db-data

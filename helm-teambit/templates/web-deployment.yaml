@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: web
+  name: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: web
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        service: web
+    spec:
+      initContainers:
+      - name: setup
+        image: {{ .Values.env.normal.IMAGE_NAME }}
+        resources:
+        {{- toYaml .Values.resources | trim | nindent 10 }}
+        command: ["/bin/sh", "-c", "python manage.py migrate && python manage.py setup"]
+        env:
+          {{ include "teambit.env_variables" . | indent 8}}
+      containers:
+        - args:
+            - /usr/bin/bash
+            - -c
+            - gunicorn -c gunicorn_config.py codice.wsgi
+          env:
+            {{ include "teambit.env_variables" .  | indent 10}}
+          image: {{ .Values.env.normal.IMAGE_NAME }}
+          name: web
+          resources:
+          {{- toYaml .Values.resources | trim | nindent 12 }}
+          volumeMounts:
+            - mountPath: /tmp
+              name: teambit-git-repo
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: Always
+      volumes:
+        - name: teambit-git-repo
+          persistentVolumeClaim:
+            claimName: teambit-git-repo

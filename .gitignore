@@ -1,0 +1,5 @@
+.DS_Store
+helm-teambit/values.yaml
+prod-config/values.yaml
+*.tgz
+local-instructions.md

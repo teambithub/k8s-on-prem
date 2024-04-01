@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: worker
+  name: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: worker
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        service: worker
+    spec:
+      containers:
+        - args:
+            - python
+            - celery_worker.py
+          env:
+            {{ include "teambit.env_variables" . | indent 10}}
+          image: {{ .Values.env.normal.IMAGE_NAME }}
+          name: worker
+          resources:
+          {{- toYaml .Values.resources | trim | nindent 12 }}
+          volumeMounts:
+            - mountPath: /tmp
+              name: teambit-git-repo-worker
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: Always
+      volumes:
+        - name: teambit-git-repo-worker
+          persistentVolumeClaim:
+            claimName: teambit-git-repo-worker

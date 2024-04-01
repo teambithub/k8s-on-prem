@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: scheduler
+  name: scheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: scheduler
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        service: scheduler
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}    
+      containers:
+        - args:
+            - python
+            - /app/manage.py
+            - runapscheduler
+          env:
+            {{ include "teambit.env_variables" . | indent 10}}
+          image: {{ .Values.env.normal.IMAGE_NAME }}
+          resources:
+          {{- toYaml .Values.resources | trim | nindent 12 }}
+          name: scheduler
+      restartPolicy: Always

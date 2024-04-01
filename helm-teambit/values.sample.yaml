@@ -1,0 +1,74 @@
+secret:
+  name: app-env-secret
+
+resources:
+  limits:
+    memory: 500Mi
+    cpu: "200m"
+  requests:
+    cpu: "50m"
+    memory: 200Mi
+
+env:
+  normal:
+    IMAGE_NAME: teambithq/teambit-app:amd64
+  secret:
+    ORGANIZATION_NAME: "<your-organization-name>"
+    ORGANIZATION_DOMAIN: "<your-organization-email-domain>"
+    POSTGRES_USER: "user"
+    POSTGRES_DB: "database"
+    POSTGRES_PASSWORD: "pass"
+    DATABASE_URL: "postgres://user:pass@db:5432/database"
+    ADMIN_USER: "<superadmin_username>"
+    ADMIN_PASSWORD: "<superadmin_password>"
+    ADMIN_EMAIL: "<superadmin_email>"
+    SECRET_KEY: "<WRITE_SOME_SECRET_KEY>"
+    CELERY_BROKER_URL : "redis://redis:6379/0"
+    API_BASE_URL: "https://yourdomain"
+    LOGIN_METHOD: "google" # Change to email_password this to use email and password authentication 
+
+    GOOGLE_CLIENT_ID: "<your_google_app_client_id>"
+    GOOGLE_SECRET: "<your_google_app_secret>"
+
+    WEBHOOK_CALLBACK_URL_GITHUB: "https://<yourdomain>/webhooks/github/organization"
+
+    JIRA_CALLBACK_URL: "https://<host>/auth/jira/callback"
+    JIRA_CLIENT_ID: "<your_jira_app_client_id>"
+    JIRA_CLIENT_SECRET: "<your_jira_app_secret>"
+    
+    SLACK_CLIENT_ID: "<your_slack_app_client_id>"
+    SLACK_SECRET: "<your_slack_app_secret"
+    SLACK_REDIRECT_URI: "https://<yourdomain>/auth/slack/callback"
+
+    
+    LINEAR_CALLBACK_URL: "https://<yourdomain>/auth/linear/callback"
+    LINEAR_CLIENT_ID: "<your_linear_app_client_id>"
+    LINEAR_CLIENT_SECRET: "<your_linear_app_secret>"
+
+
+redis:
+  image: redis:7-alpine
+  resources:
+    limits:
+      memory: 1Gi
+      cpu: "200m"
+    requests:
+      cpu: "50m"
+      memory: 200Mi
+
+postgres:
+  image: postgres:14-alpine
+  resources:
+    limits:
+      memory: 500Mi
+      cpu: "200m"
+    requests:
+      cpu: "50m"
+      memory: 200Mi
+
+imagePullSecrets: 
+- name: image-pull-secret
+
+
+    
+    
