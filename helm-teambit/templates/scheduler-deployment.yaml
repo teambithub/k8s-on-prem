@@ -10,7 +10,10 @@ spec:
     matchLabels:
       service: scheduler
   strategy:
-    type: Recreate
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2        
+      maxUnavailable: 0
   template:
     metadata:
       labels:
