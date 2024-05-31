@@ -1,4 +1,4 @@
-# Teambit - k8s files 
+# Teambit - k8s files (on-premise)
 
 ## Install minikube
 
