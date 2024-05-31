@@ -1,6 +1,6 @@
 name: helm-teambit
 description: Helm Chart for Teambit
-version: 1.0.1
+version: 1.0.2
 apiVersion: v2
 keywords:
   - helm-teambit
